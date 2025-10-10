@@ -123,7 +123,7 @@ export default function ArtPage() {
 
       {/* Full-screen artwork - cropped to fill viewport */}
       <div
-        className="relative w-full h-full cursor-pointer group"
+        className="relative w-full h-full cursor-pointer group animate-fade-from-center"
         onClick={() => setShowFullRes(true)}
       >
         <Image
@@ -163,7 +163,7 @@ export default function ArtPage() {
               </div>
               <div>
                 <p className="text-gray-500 mb-1 uppercase tracking-wider text-xs">Estimate</p>
-                <p className="font-light">€20,000 - €30,000</p>
+                <p className="font-light">€100,000+</p>
               </div>
             </div>
             <div className="mt-6 pt-6 border-t border-gray-800/50">
