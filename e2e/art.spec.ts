@@ -124,7 +124,7 @@ test.describe('Lux Art Gallery', () => {
     await expect(page.getByText('Oil on canvas')).toBeVisible()
     await expect(page.getByText('215 × 142 cm')).toBeVisible()
     await expect(page.getByText('Princesse Niloufar Pahlavi')).toBeVisible()
-    await expect(page.getByText('€20,000 - €30,000')).toBeVisible()
+    await expect(page.getByText('€100,000+')).toBeVisible()
   })
 
   test('should work on mobile viewport', async ({ page, viewport }) => {
