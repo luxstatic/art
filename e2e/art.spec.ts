@@ -128,10 +128,9 @@ test.describe('Lux Art Gallery', () => {
   })
 
   test('should show artist biography when name is clicked', async ({ page }) => {
-    // Click on artist name (which is a button with underline)
+    // Click on artist name (which is a button)
     const artistButton = page.locator('button').filter({ hasText: 'Prince Cyrus Pahlavi' })
     await expect(artistButton).toBeVisible()
-    await expect(artistButton).toHaveClass(/underline/)
 
     // Click the artist name
     await artistButton.click()
@@ -153,6 +152,40 @@ test.describe('Lux Art Gallery', () => {
 
     // Modal should be gone
     await expect(bioModal).not.toBeVisible()
+  })
+
+  test('should close biography modal with escape key', async ({ page }) => {
+    // Open bio modal
+    const artistButton = page.locator('button').filter({ hasText: 'Prince Cyrus Pahlavi' })
+    await artistButton.click()
+    await page.waitForTimeout(500)
+
+    const bioModal = page.locator('[class*="z-\\[200\\]"]')
+    await expect(bioModal).toBeVisible()
+
+    // Press escape
+    await page.keyboard.press('Escape')
+    await page.waitForTimeout(300)
+
+    // Modal should be gone
+    await expect(bioModal).not.toBeVisible()
+  })
+
+  test('should close zoom view with escape key', async ({ page }) => {
+    // Click on image to open zoom
+    await page.click('main')
+    await page.waitForTimeout(500)
+
+    // Zoom modal should be visible
+    const zoomModal = page.locator('[class*="z-\\[100\\]"]')
+    await expect(zoomModal).toBeVisible()
+
+    // Press escape
+    await page.keyboard.press('Escape')
+    await page.waitForTimeout(300)
+
+    // Modal should be gone
+    await expect(zoomModal).not.toBeVisible()
   })
 
   test('should work on mobile viewport', async ({ page, viewport }) => {

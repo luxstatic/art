@@ -32,6 +32,22 @@ export default function ArtPage() {
     return () => clearTimeout(timer)
   }, [])
 
+  // Handle escape key for modals
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (showBio) {
+          setShowBio(false)
+        } else if (showFullRes) {
+          handleCloseFullRes()
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleEscape)
+    return () => window.removeEventListener('keydown', handleEscape)
+  }, [showBio, showFullRes])
+
   const handleZoom = (delta: number) => {
     setZoom(prevZoom => Math.min(Math.max(prevZoom + delta, 1), 5))
   }
@@ -58,7 +74,17 @@ export default function ArtPage() {
     })
   }
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (e: React.MouseEvent) => {
+    if (!showFullRes) return
+
+    // If we didn't drag (click), close the zoom
+    const didDrag = Math.abs(e.clientX - (dragStart.x + pan.x)) > 5 ||
+                    Math.abs(e.clientY - (dragStart.y + pan.y)) > 5
+
+    if (!didDrag) {
+      handleCloseFullRes()
+    }
+
     setIsDragging(false)
   }
 
@@ -104,7 +130,20 @@ export default function ArtPage() {
     }
   }
 
-  const handleTouchEnd = () => {
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!showFullRes) return
+
+    // If we didn't drag (tap), close the zoom
+    if (e.changedTouches.length === 1 && !lastTouchDistance) {
+      const touch = e.changedTouches[0]
+      const didDrag = Math.abs(touch.clientX - (dragStart.x + pan.x)) > 5 ||
+                      Math.abs(touch.clientY - (dragStart.y + pan.y)) > 5
+
+      if (!didDrag) {
+        handleCloseFullRes()
+      }
+    }
+
     setIsDragging(false)
     setLastTouchDistance(null)
   }
@@ -122,20 +161,37 @@ export default function ArtPage() {
       onMouseLeave={() => !showFullRes && setShowDetails(false)}
     >
       {/* Lux logo - top left */}
-      <div className={`absolute top-6 left-6 md:top-8 md:left-8 z-50 w-12 h-12 md:w-16 md:h-16 transition-opacity duration-700 ${showDetails ? 'opacity-100' : 'opacity-0'}`}>
+      <div className={`absolute top-6 left-6 md:top-8 md:left-8 z-50 w-8 h-8 md:w-10 md:h-10 transition-opacity duration-700 ${showDetails ? 'opacity-100' : 'opacity-0'}`}>
         <LuxLogo />
       </div>
 
       {/* Full-screen artwork - cropped to fill viewport */}
       <div
-        className="relative w-full h-full cursor-pointer group animate-fade-from-center"
-        onClick={() => setShowFullRes(true)}
+        className="relative w-full h-full cursor-zoom-in group animate-fade-from-center"
+        onClick={(e) => {
+          const rect = e.currentTarget.getBoundingClientRect()
+          const clickX = e.clientX - rect.left
+          const clickY = e.clientY - rect.top
+
+          // Calculate center offset to zoom into clicked point
+          const centerX = rect.width / 2
+          const centerY = rect.height / 2
+          const zoomLevel = 1.5
+
+          // Pan to center the clicked point after zoom
+          const panX = (centerX - clickX) * (zoomLevel - 1)
+          const panY = (centerY - clickY) * (zoomLevel - 1)
+
+          setShowFullRes(true)
+          setZoom(zoomLevel)
+          setPan({ x: panX, y: panY })
+        }}
       >
         <Image
           src="/assets/sans-titre.jpg"
           alt="Sans titre (2003) by Prince Cyrus Pahlavi - Oil on canvas laid down on metal panel"
           fill
-          className="object-cover transition-transform duration-[2000ms] ease-out group-hover:scale-105"
+          className="object-cover transition-transform duration-[2000ms] ease-out group-hover:scale-[1.25]"
           priority
           quality={100}
         />
@@ -211,10 +267,14 @@ export default function ArtPage() {
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
           style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+          title="Click to close, drag to pan"
         >
           {/* Close button */}
           <button
-            onClick={handleCloseFullRes}
+            onClick={(e) => {
+              e.stopPropagation()
+              handleCloseFullRes()
+            }}
             className="absolute top-6 right-6 md:top-8 md:right-8 z-50 text-white/70 hover:text-white transition-colors duration-300"
             aria-label="Close"
           >
@@ -226,7 +286,10 @@ export default function ArtPage() {
           {/* Zoom controls */}
           <div className="absolute bottom-6 right-6 md:bottom-8 md:right-8 z-50 flex flex-col gap-2">
             <button
-              onClick={() => handleZoom(0.2)}
+              onClick={(e) => {
+                e.stopPropagation()
+                handleZoom(0.2)
+              }}
               className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors duration-300 flex items-center justify-center backdrop-blur-sm"
               aria-label="Zoom in"
             >
@@ -235,7 +298,10 @@ export default function ArtPage() {
               </svg>
             </button>
             <button
-              onClick={() => handleZoom(-0.2)}
+              onClick={(e) => {
+                e.stopPropagation()
+                handleZoom(-0.2)
+              }}
               disabled={zoom <= 1}
               className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors duration-300 flex items-center justify-center backdrop-blur-sm disabled:opacity-30"
               aria-label="Zoom out"
@@ -245,7 +311,10 @@ export default function ArtPage() {
               </svg>
             </button>
             <button
-              onClick={handleCloseFullRes}
+              onClick={(e) => {
+                e.stopPropagation()
+                handleCloseFullRes()
+              }}
               className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors duration-300 flex items-center justify-center backdrop-blur-sm"
               aria-label="Reset"
             >
