@@ -223,7 +223,7 @@ export default function ArtPage() {
 
       {/* Full-screen artwork - cropped to fill viewport */}
       <div
-        className="relative w-full h-full cursor-zoom-in group animate-fade-from-center"
+        className="absolute inset-0 w-full h-full cursor-zoom-in group animate-fade-from-center"
         onClick={(e) => {
           const rect = e.currentTarget.getBoundingClientRect()
           const clickX = e.clientX - rect.left
@@ -247,14 +247,15 @@ export default function ArtPage() {
           src="/assets/sans-titre.jpg"
           alt="Sans titre (2003) by Prince Cyrus Pahlavi - Oil on canvas laid down on metal panel"
           fill
-          className="object-cover transition-transform duration-[2000ms] ease-out group-hover:scale-[1.25]"
+          className="object-cover object-center transition-transform duration-[2000ms] ease-out group-hover:scale-[1.25]"
           priority
           quality={100}
+          sizes="100vw"
         />
 
         {/* Auction details overlay - animated */}
         <div
-          className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/80 to-transparent p-8 md:p-12 transition-all duration-1000 ease-in-out ${
+          className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/90 via-70% to-transparent p-6 pb-8 md:p-12 transition-all duration-1000 ease-in-out ${
             showDetails ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
         >
