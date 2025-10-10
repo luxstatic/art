@@ -15,13 +15,13 @@ const metadata: Metadata = {
     siteName: title,
     description,
     url,
-    images: '/assets/sans-titre.jpg'
+    images: '/og-image.png'
   },
   twitter: {
     card: 'summary_large_image',
     site: url,
     description,
-    images: '/assets/sans-titre.jpg'
+    images: '/og-image.png'
   },
   appleWebApp: {
     capable: true,
