@@ -17,6 +17,9 @@ export default function ArtPage() {
   const [showFullRes, setShowFullRes] = useState(false)
   const [showBio, setShowBio] = useState(false)
   const [showDetails, setShowDetails] = useState(true)
+  const [showShare, setShowShare] = useState(false)
+  const [showEmailSignup, setShowEmailSignup] = useState(false)
+  const [isSaved, setIsSaved] = useState(false)
   const [zoom, setZoom] = useState(1)
   const [pan, setPan] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
@@ -32,11 +35,21 @@ export default function ArtPage() {
     return () => clearTimeout(timer)
   }, [])
 
+  // Check if artwork is saved in localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('artwork-saved')
+    setIsSaved(saved === 'true')
+  }, [])
+
   // Handle escape key for modals
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (showBio) {
+        if (showEmailSignup) {
+          setShowEmailSignup(false)
+        } else if (showShare) {
+          setShowShare(false)
+        } else if (showBio) {
           setShowBio(false)
         } else if (showFullRes) {
           handleCloseFullRes()
@@ -46,7 +59,13 @@ export default function ArtPage() {
 
     window.addEventListener('keydown', handleEscape)
     return () => window.removeEventListener('keydown', handleEscape)
-  }, [showBio, showFullRes])
+  }, [showBio, showFullRes, showShare, showEmailSignup])
+
+  const toggleSaved = () => {
+    const newSaved = !isSaved
+    setIsSaved(newSaved)
+    localStorage.setItem('artwork-saved', String(newSaved))
+  }
 
   const handleZoom = (delta: number) => {
     setZoom(prevZoom => Math.min(Math.max(prevZoom + delta, 1), 5))
@@ -163,6 +182,43 @@ export default function ArtPage() {
       {/* Lux logo - top left */}
       <div className={`absolute top-6 left-6 md:top-8 md:left-8 z-50 w-8 h-8 md:w-10 md:h-10 transition-opacity duration-700 ${showDetails ? 'opacity-100' : 'opacity-0'}`}>
         <LuxLogo />
+      </div>
+
+      {/* Action buttons - top right */}
+      <div className={`absolute top-6 right-6 md:top-8 md:right-8 z-50 flex gap-3 transition-opacity duration-700 ${showDetails ? 'opacity-100' : 'opacity-0'}`}>
+        {/* Heart/Save button */}
+        <button
+          onClick={toggleSaved}
+          className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-200 flex items-center justify-center group"
+          aria-label={isSaved ? 'Remove from saved' : 'Save artwork'}
+        >
+          <svg className="w-5 h-5 md:w-6 md:h-6 transition-all duration-200" fill={isSaved ? 'white' : 'none'} stroke="white" strokeWidth={1.5} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+          </svg>
+        </button>
+
+        {/* Share button */}
+        <button
+          onClick={() => setShowShare(true)}
+          className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-200 flex items-center justify-center"
+          aria-label="Share artwork"
+        >
+          <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="white" strokeWidth={1.5} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+          </svg>
+        </button>
+
+        {/* Email signup button */}
+        <button
+          onClick={() => setShowEmailSignup(true)}
+          className="hidden md:flex px-4 h-10 md:h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-200 items-center gap-2 text-white text-sm font-light"
+          aria-label="Get notified"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+            <path strokeLinecap="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+          </svg>
+          <span>Notify Me</span>
+        </button>
       </div>
 
       {/* Full-screen artwork - cropped to fill viewport */}
@@ -349,6 +405,210 @@ export default function ArtPage() {
                 draggable={false}
               />
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Share Dialog */}
+      {showShare && (
+        <div
+          className="fixed inset-0 z-[200] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 md:p-8 animate-fade-in"
+          onClick={() => setShowShare(false)}
+        >
+          <div
+            className="bg-black border border-white/10 rounded-lg max-w-2xl w-full animate-slide-up"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="border-b border-white/10 p-6 md:p-8">
+              <div className="flex justify-between items-start gap-4">
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-light text-white mb-1">Share Artwork</h2>
+                  <p className="text-sm text-white/40">Share this stunning piece</p>
+                </div>
+                <button
+                  onClick={() => setShowShare(false)}
+                  className="text-white/60 hover:text-white transition-colors duration-200 p-2"
+                  aria-label="Close share dialog"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 md:p-8 space-y-6">
+              {/* Share URL */}
+              <div>
+                <label className="block text-sm text-white/40 mb-2">Share Link</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    readOnly
+                    value={typeof window !== 'undefined' ? window.location.href : ''}
+                    className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded-md text-white text-sm focus:outline-none focus:border-white/30"
+                  />
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(window.location.href)
+                    }}
+                    className="px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-md text-white text-sm transition-colors duration-200"
+                  >
+                    Copy
+                  </button>
+                </div>
+              </div>
+
+              {/* Embed Code */}
+              <div>
+                <label className="block text-sm text-white/40 mb-2">Embed Code</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    readOnly
+                    value={`<iframe src="${typeof window !== 'undefined' ? window.location.href : ''}" width="100%" height="600" frameborder="0"></iframe>`}
+                    className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded-md text-white text-sm font-mono focus:outline-none focus:border-white/30"
+                  />
+                  <button
+                    onClick={() => {
+                      const embedCode = `<iframe src="${window.location.href}" width="100%" height="600" frameborder="0"></iframe>`
+                      navigator.clipboard.writeText(embedCode)
+                    }}
+                    className="px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-md text-white text-sm transition-colors duration-200"
+                  >
+                    Copy
+                  </button>
+                </div>
+              </div>
+
+              {/* Social Share Buttons */}
+              <div>
+                <p className="text-sm text-white/40 mb-3">Share on social media</p>
+                <div className="flex gap-3">
+                  <a
+                    href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}&text=${encodeURIComponent('Check out this stunning artwork by Prince Cyrus Pahlavi')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-md text-white text-sm transition-colors duration-200 flex items-center justify-center gap-2"
+                  >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                    </svg>
+                    <span>X</span>
+                  </a>
+                  <a
+                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-md text-white text-sm transition-colors duration-200 flex items-center justify-center gap-2"
+                  >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                    </svg>
+                    <span>Facebook</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="border-t border-white/10 p-6 md:p-8">
+              <button
+                onClick={() => setShowShare(false)}
+                className="w-full md:w-auto px-6 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-md transition-colors duration-200 text-sm font-light"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Email Signup Modal */}
+      {showEmailSignup && (
+        <div
+          className="fixed inset-0 z-[200] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 md:p-8 animate-fade-in"
+          onClick={() => setShowEmailSignup(false)}
+        >
+          <div
+            className="bg-black border border-white/10 rounded-lg max-w-md w-full animate-slide-up"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="border-b border-white/10 p-6 md:p-8">
+              <div className="flex justify-between items-start gap-4">
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-light text-white mb-1">Get Notified</h2>
+                  <p className="text-sm text-white/40">Be the first to know about new drops</p>
+                </div>
+                <button
+                  onClick={() => setShowEmailSignup(false)}
+                  className="text-white/60 hover:text-white transition-colors duration-200 p-2"
+                  aria-label="Close email signup"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Form */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                const formData = new FormData(e.currentTarget)
+                const email = formData.get('email') as string
+
+                // Store in localStorage for now (TODO: connect to email service)
+                const emails = JSON.parse(localStorage.getItem('newsletter-emails') || '[]')
+                if (!emails.includes(email)) {
+                  emails.push(email)
+                  localStorage.setItem('newsletter-emails', JSON.stringify(emails))
+                }
+
+                // Show success and close
+                alert('Thank you! You will be notified about new drops.')
+                setShowEmailSignup(false)
+              }}
+              className="p-6 md:p-8 space-y-6"
+            >
+              <div>
+                <label htmlFor="email" className="block text-sm text-white/40 mb-2">
+                  Email Address
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  placeholder="your@email.com"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-md text-white placeholder-white/30 focus:outline-none focus:border-white/30 transition-colors duration-200"
+                />
+              </div>
+
+              <div className="flex items-start gap-3">
+                <input
+                  id="consent"
+                  name="consent"
+                  type="checkbox"
+                  required
+                  className="mt-1 w-4 h-4 rounded border-white/10 bg-white/5 text-white focus:ring-white/30"
+                />
+                <label htmlFor="consent" className="text-xs text-white/60">
+                  I agree to receive emails about new artwork drops and auction notifications. You can unsubscribe at any time.
+                </label>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-md text-white transition-colors duration-200 font-light"
+              >
+                Notify Me
+              </button>
+            </form>
           </div>
         </div>
       )}
