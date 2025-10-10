@@ -9,8 +9,13 @@ const LuxLogo = () => (
   </svg>
 )
 
+const ARTIST_BIO = `Cyrus Pahlavi — a member of the Iranian royal family — was born in 1969 with the title of Prince. His early years were marked by upheaval; at just nine years old, the Iranian revolution forced his family into exile. He was sent to a remote island in the Republic of Seychelles, so isolated that few even knew of its existence. There, surrounded by nature and cut off from his peers, he turned to painting as a way to both capture the beauty of his surroundings and express his inner world. Nature became his greatest muse and most profound teacher.
+
+When circumstances finally allowed him to return to civilization, Cyrus pursued his education in Europe, attending the prestigious Institut le Rosey in Switzerland before studying art at Parsons school of design. His artistic journey led him to explore a wide range of techniques and mediums, continuously pushing creative boundaries. His work has been exhibited internationally, including Marlborough Gallery (Monaco), Miami Art Basel 2023 (the Continuum Opera Gallery), Galerie Saint-Père (Paris), Palace Hotel (Gstaad, Switzerland), the Museum of contemporary art le Pavillon Vendome (Paris), CAN 7 Formentera Gallery (Ibiza), Galerie Pierre Passebon (Paris), Art Dubai Courtyard gallery (2022), the Genesis Odyssey personnel Gallery (Geneva, April 2025), and Villa Padierna palace (Marbella, August 2025). Beyond his contributions to the art world, Cyrus has also made his mark in the film industry as both an actor and producer. One of his most meaningful projects, Rainbows for Beslan, was created to help child survivors of the 2004 Beslan school siege process their grief and find hope. For Cyrus, painting is more than just expression; it is a healing force and a testament to the resilience of the human spirit. "Painting has a healing effect, allowing energy to flow in a circular and positive way. It is a taste of freedom."`
+
 export default function ArtPage() {
   const [showFullRes, setShowFullRes] = useState(false)
+  const [showBio, setShowBio] = useState(false)
   const [showDetails, setShowDetails] = useState(true)
   const [zoom, setZoom] = useState(1)
   const [pan, setPan] = useState({ x: 0, y: 0 })
@@ -137,42 +142,51 @@ export default function ArtPage() {
 
         {/* Auction details overlay - animated */}
         <div
-          className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-8 md:p-12 transition-all duration-1000 ease-in-out ${
+          className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/80 to-transparent p-8 md:p-12 transition-all duration-1000 ease-in-out ${
             showDetails ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
         >
-          <div className="max-w-4xl mx-auto text-white">
-            <h1 className="text-3xl md:text-5xl font-light mb-3 tracking-wide">
+          <div className="max-w-4xl mx-auto">
+            <h1 className="text-3xl md:text-5xl font-light mb-2 tracking-tight text-white">
               Sans titre
             </h1>
-            <p className="text-lg md:text-xl font-light text-gray-300 mb-8">
-              Prince Cyrus Pahlavi, 2003
+            <p className="text-base md:text-lg font-normal text-white/60 mb-8">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setShowBio(true)
+                }}
+                className="hover:text-white transition-colors duration-200 cursor-pointer"
+              >
+                Prince Cyrus Pahlavi
+              </button>
+              , 2003
             </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-xs md:text-sm">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-sm">
               <div>
-                <p className="text-gray-500 mb-1 uppercase tracking-wider text-xs">Medium</p>
-                <p className="font-light">Oil on canvas</p>
+                <p className="text-white/40 mb-1 text-xs uppercase tracking-wide">Medium</p>
+                <p className="text-white font-light">Oil on canvas</p>
               </div>
               <div>
-                <p className="text-gray-500 mb-1 uppercase tracking-wider text-xs">Size</p>
-                <p className="font-light">215 × 142 cm</p>
+                <p className="text-white/40 mb-1 text-xs uppercase tracking-wide">Size</p>
+                <p className="text-white font-light">215 × 142 cm</p>
               </div>
               <div>
-                <p className="text-gray-500 mb-1 uppercase tracking-wider text-xs">Collection</p>
-                <p className="font-light">Princesse Niloufar Pahlavi</p>
+                <p className="text-white/40 mb-1 text-xs uppercase tracking-wide">Collection</p>
+                <p className="text-white font-light">Princesse Niloufar Pahlavi</p>
               </div>
               <div>
-                <p className="text-gray-500 mb-1 uppercase tracking-wider text-xs">Estimate</p>
-                <p className="font-light">€100,000+</p>
+                <p className="text-white/40 mb-1 text-xs uppercase tracking-wide">Estimate</p>
+                <p className="text-white font-light">€100,000+</p>
               </div>
             </div>
-            <div className="mt-6 pt-6 border-t border-gray-800/50">
+            <div className="mt-6 pt-6 border-t border-white/10">
               <a
                 href="https://www.sothebys.com/en/buy/auction/2025/collection-princesse-niloufar-pahlavi-une-maison-par-jacques-grange-pf2537/sans-titre-6"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors duration-300 text-sm"
+                className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors duration-200 text-sm"
               >
                 <span>Sotheby's Auction</span>
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -265,6 +279,70 @@ export default function ArtPage() {
                 quality={100}
                 draggable={false}
               />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Biography Modal */}
+      {showBio && (
+        <div
+          className="fixed inset-0 z-[200] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 md:p-8 animate-fade-in"
+          onClick={() => setShowBio(false)}
+        >
+          <div
+            className="bg-black border border-white/10 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-slide-up"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="sticky top-0 bg-black/95 backdrop-blur-sm border-b border-white/10 p-6 md:p-8 z-10">
+              <div className="flex justify-between items-start gap-4">
+                <div className="flex items-center gap-4 md:gap-6">
+                  {/* Portrait */}
+                  <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-md overflow-hidden flex-shrink-0 ring-1 ring-white/10">
+                    <Image
+                      src="/assets/cyrus-pahlavi.webp"
+                      alt="Prince Cyrus Pahlavi"
+                      fill
+                      className="object-cover"
+                      quality={95}
+                    />
+                  </div>
+                  {/* Text */}
+                  <div>
+                    <h2 className="text-2xl md:text-3xl font-light text-white mb-1">Prince Cyrus Pahlavi</h2>
+                    <p className="text-sm text-white/40">Artist Biography</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowBio(false)}
+                  className="text-white/60 hover:text-white transition-colors duration-200 p-2 flex-shrink-0"
+                  aria-label="Close biography"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 md:p-8 space-y-4">
+              {ARTIST_BIO.split('\n\n').map((paragraph, index) => (
+                <p key={index} className="text-white/70 leading-relaxed text-sm md:text-base">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+
+            {/* Footer with close button */}
+            <div className="sticky bottom-0 bg-black/95 backdrop-blur-sm border-t border-white/10 p-6 md:p-8">
+              <button
+                onClick={() => setShowBio(false)}
+                className="w-full md:w-auto px-6 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-md transition-colors duration-200 text-sm font-light"
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>

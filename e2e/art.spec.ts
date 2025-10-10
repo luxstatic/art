@@ -127,6 +127,34 @@ test.describe('Lux Art Gallery', () => {
     await expect(page.getByText('€100,000+')).toBeVisible()
   })
 
+  test('should show artist biography when name is clicked', async ({ page }) => {
+    // Click on artist name (which is a button with underline)
+    const artistButton = page.locator('button').filter({ hasText: 'Prince Cyrus Pahlavi' })
+    await expect(artistButton).toBeVisible()
+    await expect(artistButton).toHaveClass(/underline/)
+
+    // Click the artist name
+    await artistButton.click()
+    await page.waitForTimeout(500)
+
+    // Bio modal should be visible
+    const bioModal = page.locator('[class*="z-\\[200\\]"]')
+    await expect(bioModal).toBeVisible()
+
+    // Check for bio content
+    await expect(page.getByText('Artist Biography')).toBeVisible()
+    await expect(page.getByText(/Iranian royal family/)).toBeVisible()
+    await expect(page.getByText(/Institut le Rosey/)).toBeVisible()
+
+    // Close button should work
+    const closeButton = page.locator('button[aria-label="Close biography"]')
+    await closeButton.click()
+    await page.waitForTimeout(300)
+
+    // Modal should be gone
+    await expect(bioModal).not.toBeVisible()
+  })
+
   test('should work on mobile viewport', async ({ page, viewport }) => {
     test.skip(!viewport || viewport.width < 768, 'Desktop only test')
 
