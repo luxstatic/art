@@ -16,7 +16,7 @@
   "dependencies": {
     "@hanzo/auth": "^2.5.4",
     "@hanzo/commerce": "^7.3.7",
-    "@hanzo/ui": "^4.5.3",
+    "@hanzo/ui": "^5.1.0",
     "@luxfi/ui": "^5.5.1",
     "@next/mdx": "15.1.6",
     "lucide-react": "^0.456.0",
