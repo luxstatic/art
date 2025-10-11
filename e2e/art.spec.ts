@@ -57,7 +57,7 @@ test.describe('Lux Art Gallery', () => {
 
   test('should open full-resolution view on click', async ({ page }) => {
     // Click on artwork
-    const artwork = page.locator('div.cursor-pointer').first()
+    const artwork = page.locator('div.cursor-zoom-in').first()
     await artwork.click()
 
     // Modal should be visible
@@ -75,7 +75,7 @@ test.describe('Lux Art Gallery', () => {
 
   test('should zoom in and out with controls', async ({ page }) => {
     // Open full-res view
-    await page.locator('div.cursor-pointer').first().click()
+    await page.locator('div.cursor-zoom-in').first().click()
     await page.waitForTimeout(500)
 
     // Click zoom in button 2 times
@@ -101,7 +101,7 @@ test.describe('Lux Art Gallery', () => {
 
   test('should close full-res view on close button click', async ({ page }) => {
     // Open full-res view
-    await page.locator('div.cursor-pointer').first().click()
+    await page.locator('div.cursor-zoom-in').first().click()
 
     // Click close button
     await page.locator('button[aria-label="Close"]').click()
@@ -202,7 +202,7 @@ test.describe('Lux Art Gallery', () => {
     test.skip(!isMobile, 'Mobile only test')
 
     // Open full-res view with tap
-    const artwork = page.locator('div.cursor-pointer').first()
+    const artwork = page.locator('div.cursor-zoom-in').first()
     await artwork.tap()
 
     // Modal should be visible
