@@ -1,6 +1,4 @@
-# Lux Art
-
-A calm, beautiful, stately art gallery showcasing curated pieces.
+# art
 
 ## Currently Featured
 
