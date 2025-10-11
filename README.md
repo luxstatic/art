@@ -9,7 +9,7 @@ Oil on canvas laid down on metal panel
 215.4 × 142 cm (84 ⅞ × 56 in)
 
 From the Collection Princesse Niloufar Pahlavi
-Sotheby's Auction - Estimate: €20,000 - €30,000
+Sotheby's Auction - Estimate: €100,000+
 
 ## Features
 
