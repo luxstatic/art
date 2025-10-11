@@ -328,6 +328,7 @@ export default function ArtPage() {
         >
           {/* Close button */}
           <button
+            onMouseDown={(e) => e.stopPropagation()}
             onClick={(e) => {
               e.stopPropagation()
               handleCloseFullRes()
@@ -343,6 +344,7 @@ export default function ArtPage() {
           {/* Zoom controls */}
           <div className="absolute bottom-6 right-6 md:bottom-8 md:right-8 z-50 flex flex-col gap-2">
             <button
+              onMouseDown={(e) => e.stopPropagation()}
               onClick={(e) => {
                 e.stopPropagation()
                 handleZoom(0.2)
@@ -355,6 +357,7 @@ export default function ArtPage() {
               </svg>
             </button>
             <button
+              onMouseDown={(e) => e.stopPropagation()}
               onClick={(e) => {
                 e.stopPropagation()
                 handleZoom(-0.2)
@@ -368,6 +371,7 @@ export default function ArtPage() {
               </svg>
             </button>
             <button
+              onMouseDown={(e) => e.stopPropagation()}
               onClick={(e) => {
                 e.stopPropagation()
                 handleCloseFullRes()
