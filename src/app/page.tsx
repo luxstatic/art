@@ -19,6 +19,7 @@ export default function ArtPage() {
   const [showDetails, setShowDetails] = useState(true)
   const [showShare, setShowShare] = useState(false)
   const [showEmailSignup, setShowEmailSignup] = useState(false)
+  const [showEmailSuccess, setShowEmailSuccess] = useState(false)
   const [isSaved, setIsSaved] = useState(false)
   const [zoom, setZoom] = useState(1)
   const [pan, setPan] = useState({ x: 0, y: 0 })
@@ -45,7 +46,9 @@ export default function ArtPage() {
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (showEmailSignup) {
+        if (showEmailSuccess) {
+          setShowEmailSuccess(false)
+        } else if (showEmailSignup) {
           setShowEmailSignup(false)
         } else if (showShare) {
           setShowShare(false)
@@ -59,7 +62,7 @@ export default function ArtPage() {
 
     window.addEventListener('keydown', handleEscape)
     return () => window.removeEventListener('keydown', handleEscape)
-  }, [showBio, showFullRes, showShare, showEmailSignup])
+  }, [showBio, showFullRes, showShare, showEmailSignup, showEmailSuccess])
 
   const toggleSaved = () => {
     const newSaved = !isSaved
@@ -531,6 +534,108 @@ export default function ArtPage() {
         </div>
       )}
 
+      {/* Email Success Modal with Share Options */}
+      {showEmailSuccess && (
+        <div
+          className="fixed inset-0 z-[200] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 md:p-8 animate-fade-in"
+          onClick={() => setShowEmailSuccess(false)}
+        >
+          <div
+            className="bg-black border border-white/10 rounded-lg max-w-2xl w-full animate-slide-up"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header with success icon */}
+            <div className="border-b border-white/10 p-6 md:p-8">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h2 className="text-2xl md:text-3xl font-light text-white mb-1">You're All Set!</h2>
+                  <p className="text-sm text-white/60">We'll notify you about new drops and auction updates</p>
+                </div>
+                <button
+                  onClick={() => setShowEmailSuccess(false)}
+                  className="text-white/60 hover:text-white transition-colors duration-200 p-2 flex-shrink-0"
+                  aria-label="Close"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Share options */}
+            <div className="p-6 md:p-8 space-y-6">
+              <div>
+                <h3 className="text-lg font-light text-white mb-3">Help spread the word</h3>
+                <p className="text-sm text-white/60 mb-4">Share this artwork with your network</p>
+              </div>
+
+              {/* Social Share Buttons */}
+              <div className="grid grid-cols-2 gap-3">
+                <a
+                  href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}&text=${encodeURIComponent('Check out this stunning artwork by Prince Cyrus Pahlavi')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-md text-white text-sm transition-colors duration-200 flex items-center justify-center gap-2"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                  </svg>
+                  <span>Share on X</span>
+                </a>
+                <a
+                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-md text-white text-sm transition-colors duration-200 flex items-center justify-center gap-2"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                  </svg>
+                  <span>Share on Facebook</span>
+                </a>
+              </div>
+
+              {/* Copy link */}
+              <div>
+                <label className="block text-sm text-white/40 mb-2">Copy Link</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    readOnly
+                    value={typeof window !== 'undefined' ? window.location.href : ''}
+                    className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded-md text-white text-sm focus:outline-none focus:border-white/30"
+                  />
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(window.location.href)
+                    }}
+                    className="px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-md text-white text-sm transition-colors duration-200"
+                  >
+                    Copy
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="border-t border-white/10 p-6 md:p-8">
+              <button
+                onClick={() => setShowEmailSuccess(false)}
+                className="w-full px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-md text-white transition-colors duration-200 font-light"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Email Signup Modal */}
       {showEmailSignup && (
         <div
@@ -574,9 +679,9 @@ export default function ArtPage() {
                   localStorage.setItem('newsletter-emails', JSON.stringify(emails))
                 }
 
-                // Show success and close
-                alert('Thank you! You will be notified about new drops.')
+                // Show success modal
                 setShowEmailSignup(false)
+                setShowEmailSuccess(true)
               }}
               className="p-6 md:p-8 space-y-6"
             >
