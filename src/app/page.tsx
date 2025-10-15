@@ -289,7 +289,7 @@ export default function ArtPage() {
               </div>
               <div>
                 <p className="text-white/40 mb-1 text-xs uppercase tracking-wide">Collection</p>
-                <p className="text-white font-light">Princesse Niloufar Pahlavi</p>
+                <p className="text-white font-light">Private</p>
               </div>
               <div>
                 <p className="text-white/40 mb-1 text-xs uppercase tracking-wide">Sold For</p>
