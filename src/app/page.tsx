@@ -65,9 +65,9 @@ export default function ArtPage() {
   }, [showBio, showFullRes, showShare, showEmailSignup, showEmailSuccess])
 
   const toggleSaved = () => {
-    const newSaved = !isSaved
-    setIsSaved(newSaved)
-    localStorage.setItem('artwork-saved', String(newSaved))
+    // Redirect to Lux login with return URL
+    const returnUrl = encodeURIComponent(window.location.href)
+    window.location.href = `https://lux.id/login?return=${returnUrl}&action=save`
   }
 
   const handleZoom = (delta: number) => {
@@ -214,7 +214,7 @@ export default function ArtPage() {
         {/* Email signup button */}
         <button
           onClick={() => setShowEmailSignup(true)}
-          className="hidden md:flex px-4 h-10 md:h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-200 items-center gap-2 text-white text-sm font-light"
+          className="hidden md:flex px-4 h-10 md:h-12 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-200 items-center gap-2 text-white text-sm font-light"
           aria-label="Get notified"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
@@ -292,8 +292,8 @@ export default function ArtPage() {
                 <p className="text-white font-light">Princesse Niloufar Pahlavi</p>
               </div>
               <div>
-                <p className="text-white/40 mb-1 text-xs uppercase tracking-wide">Estimate</p>
-                <p className="text-white font-light">€100,000+</p>
+                <p className="text-white/40 mb-1 text-xs uppercase tracking-wide">Sold For</p>
+                <p className="text-white font-light">€27,940</p>
               </div>
             </div>
             <div className="mt-6 pt-6 border-t border-white/10">
