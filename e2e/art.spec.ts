@@ -124,7 +124,7 @@ test.describe('Lux Art Gallery', () => {
     await expect(page.getByText('Oil on canvas')).toBeVisible()
     await expect(page.getByText('215 × 142 cm')).toBeVisible()
     await expect(page.getByText('Princesse Niloufar Pahlavi')).toBeVisible()
-    await expect(page.getByText('€100,000+')).toBeVisible()
+    await expect(page.getByText('€27,940')).toBeVisible()
   })
 
   test('should show artist biography when name is clicked', async ({ page }) => {
