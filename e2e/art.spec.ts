@@ -123,7 +123,7 @@ test.describe('Lux Art Gallery', () => {
     // Check all detail fields
     await expect(page.getByText('Oil on canvas')).toBeVisible()
     await expect(page.getByText('215 × 142 cm')).toBeVisible()
-    await expect(page.getByText('Princesse Niloufar Pahlavi')).toBeVisible()
+    await expect(page.getByText('Private')).toBeVisible()
     await expect(page.getByText('€27,940')).toBeVisible()
   })
 
